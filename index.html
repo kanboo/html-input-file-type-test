@@ -90,6 +90,15 @@
           </td>
         </tr>
 
+        <!-- 上傳圖片 (FileReader)：使用 FileReader.readAsDataURL -->
+        <tr>
+          <td>上傳圖片 (FileReader)</td>
+          <td class="preview-cell">
+            <input type="file" id="input-image-fr" accept="image/*" />
+            <div id="preview-image-fr"><span class="no-image">no image upload</span></div>
+          </td>
+        </tr>
+
         <!-- 上傳聲音：accept audio/* (廣泛 MIME，m4a/audio/x-m4a 可通過) -->
         <tr>
           <td>上傳聲音</td>
@@ -151,6 +160,23 @@
           const url = URL.createObjectURL(file);
           const json = fileToJson(file);
           previewDiv.innerHTML = '<img src="' + url + '" alt="uploaded image" /><pre>' + json + '</pre>';
+        } else {
+          previewDiv.innerHTML = '<span class="no-image">no image upload</span>';
+        }
+      });
+
+      // --- 上傳圖片 (FileReader) ---
+      document.getElementById('input-image-fr').addEventListener('change', function () {
+        const file = this.files[0];
+        const previewDiv = document.getElementById('preview-image-fr');
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const json = fileToJson(file);
+            previewDiv.innerHTML = '<img src="' + e.target.result + '" alt="uploaded image" /><pre>' + json + '</pre>';
+          };
+          reader.readAsDataURL(file);
         } else {
           previewDiv.innerHTML = '<span class="no-image">no image upload</span>';
         }
