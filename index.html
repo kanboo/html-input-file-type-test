@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML Input File Type Test</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 16px;
+        background: #fff;
+        color: #000;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 640px;
+      }
+
+      th,
+      td {
+        border: 1px solid #999;
+        padding: 8px 12px;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f0f0f0;
+        text-align: left;
+      }
+
+      td:first-child {
+        white-space: nowrap;
+        width: 120px;
+        vertical-align: middle;
+      }
+
+      .preview-cell {
+        min-height: 32px;
+      }
+
+      .preview-cell img {
+        display: block;
+        max-width: 200px;
+        max-height: 200px;
+        margin-top: 6px;
+      }
+
+      .preview-cell pre {
+        background: none;
+        font-size: 13px;
+        white-space: pre-wrap;
+        word-break: break-all;
+        margin-top: 4px;
+      }
+
+      .no-image {
+        color: #555;
+        font-style: italic;
+      }
+
+
+    </style>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <th>Upload Action</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 上傳圖片：accept image/* -->
+        <tr>
+          <td>上傳圖片</td>
+          <td class="preview-cell">
+            <input type="file" id="input-image" accept="image/*" />
+            <div id="preview-image"><span class="no-image">no image upload</span></div>
+          </td>
+        </tr>
+
+        <!-- 上傳聲音：accept audio/* (廣泛 MIME，m4a/audio/x-m4a 可通過) -->
+        <tr>
+          <td>上傳聲音</td>
+          <td class="preview-cell">
+            <input type="file" id="input-audio-1" accept="audio/*" />
+            <div id="preview-audio-1"></div>
+          </td>
+        </tr>
+
+        <!-- 上傳聲音 2.0：accept 特定副檔名 .mp3 .wav .ogg .m4a -->
+        <tr>
+          <td>上傳聲音 2.0</td>
+          <td class="preview-cell">
+            <input type="file" id="input-audio-2" accept=".mp3,.wav,.ogg,.m4a" />
+            <div id="preview-audio-2"></div>
+          </td>
+        </tr>
+
+        <!-- 上傳聲音 3.0：accept 特定 MIME audio/mpeg audio/wav audio/mp4 audio/x-m4a -->
+        <tr>
+          <td>上傳聲音 3.0</td>
+          <td class="preview-cell">
+            <input type="file" id="input-audio-3" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a" />
+            <div id="preview-audio-3"></div>
+          </td>
+        </tr>
+
+        <!-- 上傳任意檔案：無 accept 限制 -->
+        <tr>
+          <td>上傳任意檔案</td>
+          <td class="preview-cell">
+            <input type="file" id="input-any" />
+            <div id="preview-any"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script>
+      // 將 File 物件轉為 JSON 顯示字串
+      function fileToJson(file) {
+        return JSON.stringify(
+          {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+          },
+          null,
+          2
+        );
+      }
+
+      // --- 上傳圖片 ---
+      document.getElementById('input-image').addEventListener('change', function () {
+        const file = this.files[0];
+        const previewDiv = document.getElementById('preview-image');
+
+        if (file) {
+          const url = URL.createObjectURL(file);
+          const json = fileToJson(file);
+          previewDiv.innerHTML = '<img src="' + url + '" alt="uploaded image" /><pre>' + json + '</pre>';
+        } else {
+          previewDiv.innerHTML = '<span class="no-image">no image upload</span>';
+        }
+      });
+
+      // --- 上傳聲音（通用處理函式） ---
+      function bindAudioInput(inputId, previewId) {
+        document.getElementById(inputId).addEventListener('change', function () {
+          const file = this.files[0];
+          const previewDiv = document.getElementById(previewId);
+
+          if (file) {
+            const json = fileToJson(file);
+            previewDiv.innerHTML = '<pre>' + json + '</pre>';
+          } else {
+            previewDiv.innerHTML = '';
+          }
+        });
+      }
+
+      bindAudioInput('input-audio-1', 'preview-audio-1');
+      bindAudioInput('input-audio-2', 'preview-audio-2');
+      bindAudioInput('input-audio-3', 'preview-audio-3');
+
+      // --- 上傳任意檔案 ---
+      document.getElementById('input-any').addEventListener('change', function () {
+        const file = this.files[0];
+        const previewDiv = document.getElementById('preview-any');
+
+        if (file) {
+          const json = fileToJson(file);
+          previewDiv.innerHTML = '<pre>' + json + '</pre>';
+        } else {
+          previewDiv.innerHTML = '';
+        }
+      });
+    </script>
+  </body>
+</html>
